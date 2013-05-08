@@ -112,7 +112,7 @@ public class Shibboleth implements SSOInterface {
 
     @Override
     public String getLabel() {
-        return "Shibboleth";
+        return "Login with Deakin Credentials";
     }
 
     @Override
@@ -151,28 +151,23 @@ public class Shibboleth implements SSOInterface {
     @SuppressWarnings("unchecked")
     public User getUserObject(JsonSessionState session) {
         logger.trace("getUserObject");
-        List<String> un = (List<String>) session.get(SHIB_USER_NAME);
-        List<String> rn = (List<String>) session.get(SHIB_COMMON_NAME);
+        String un = (String) session.get(SHIB_USER_NAME);
+        String rn = (String) session.get(SHIB_COMMON_NAME);
         if (un != null) {
             if (rn == null) {
                 rn = un;
             }
-            if (un.size() > 1) {
-                logger.warn(String.format("More than one username was retrieved: %s using the first: %s", un, un.get(0)));
-            }
-            if (rn.size() > 1 && rn != un) {
-                logger.warn(String.format("More than one real name was retrieved: %s using the first: %s", un, un.get(0)));
-            }
 
-            ShibbolethUser user = new ShibbolethUser(un.get(0), rn.get(0));
-            Object tmp;
+            ShibbolethUser user = new ShibbolethUser(un, rn);
+            String tmp;
             for (String s : SHIB_ATTRIBUTES) {
-                tmp = session.get(s);
-                if (!s.equals(SHIB_USER_NAME) && !s.equals(SHIB_COMMON_NAME) && tmp instanceof List) {
-                    user.set(s, join(SHIB_ATTRIBUTE_DELIMITER, (List<String>) tmp));
+                tmp = (String) session.get(s);
+                if (!s.equals(SHIB_USER_NAME) && !s.equals(SHIB_COMMON_NAME)) {
+                    user.set(s, tmp);
                 }
             }
             user.setSource(SHIBBOLETH_PLUGIN_ID);
+            logger.trace(String.format("getUserObject: %s", user));
             return user;
         }
         return null;
@@ -227,23 +222,8 @@ public class Shibboleth implements SSOInterface {
 
     @SuppressWarnings("unchecked")
     private void addAttr(String key, String value, JsonSessionState session) {
-        Object o = session.get(key);
-        List<String> l;
-        if (o == null) {
-            session.set(key, l = new ArrayList<String>());
-        } else {
-            l = (List<String>) o;
-        }
-        List<String> vals;
-        if (SHIB_ATTRIBUTE_DELIMITER != null) {
-            vals = Arrays.asList(value.split(SHIB_ATTRIBUTE_DELIMITER));
-            logger.trace(String.format("Adding: %s : %s", key, vals));
-        }else
-        {
-            vals = new ArrayList<String>();
-            vals.add(value);
-        }
-        l.addAll(vals);
+        session.set(key, value) ;
+        logger.trace(String.format("Adding: %s : %s", key, value));
     }
 
     @Override

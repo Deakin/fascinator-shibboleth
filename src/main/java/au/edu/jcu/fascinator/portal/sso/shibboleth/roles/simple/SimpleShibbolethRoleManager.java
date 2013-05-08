@@ -37,6 +37,8 @@ import org.slf4j.LoggerFactory;
 import static au.edu.jcu.fascinator.portal.sso.shibboleth.Constants.SHIBBOLETH_DELIMITER;
 import static au.edu.jcu.fascinator.portal.sso.shibboleth.Constants.SHIBBOLETH_PLUGIN_ID;
 
+import java.util.*;
+
 /**
  * Fascinator Shibboleth Integration
  *
@@ -78,9 +80,21 @@ public class SimpleShibbolethRoleManager implements ShibbolethRoleManager {
         }
         JSONArray tmp, _tmp;
         JSONArray rule;
-        ArrayList _attr;
+        List<String> _attr ;
         String attr, op;
         ShibSimpleRoleOperator operation;
+
+        String delimiter ;
+        try
+        {
+            JsonSimpleConfig config = new JsonSimpleConfig();
+            delimiter = config.getString(";", SHIBBOLETH_PLUGIN_ID, SHIBBOLETH_DELIMITER);
+        }
+        catch(Exception e)
+        {
+            delimiter = ";" ;
+        }
+
         for (Object role : cfg.keySet()) {
             _tmp = (JSONArray) cfg.get(role);
             for (Object o : _tmp) {
@@ -91,20 +105,26 @@ public class SimpleShibbolethRoleManager implements ShibbolethRoleManager {
                 for (Object _rule : tmp) {
                     if (_rule instanceof JSONArray) {
                         rule = (JSONArray) _rule;
-                        _attr = (ArrayList) session.get(rule.get(ATTR_POS).toString());
-                        if (_attr != null) {
-                            logger.trace("Found attr: " + rule.get(ATTR_POS) + " in session.");
-                            operation = operations.get(op = rule.get(OP_POS).toString());
-                            if (operation != null) {
-                                for (Object s : _attr) {
-                                    attr = (String) s;
-                                    if (operation.doOperation(rule.get(VALUE_POS).toString(), attr)) {
-                                        entryCount++;
-                                    }
+                        String _attr_value = (String) session.get(rule.get(ATTR_POS).toString());
+                        logger.trace("Checking on attr: " + rule.get(ATTR_POS) + " in session.");
+                        logger.trace(String.format("we have value in session: %s", _attr_value));
+
+
+                        _attr = Arrays.asList( _attr_value.split(delimiter) ) ;
+
+                        logger.trace(String.format("we have value as array in session: %s", _attr));
+
+                        logger.trace("Found attr: " + rule.get(ATTR_POS) + " in session.");
+                        operation = operations.get(op = rule.get(OP_POS).toString());
+                        if (operation != null) {
+                            for (Object s : _attr) {
+                                attr = (String) s;
+                                if (operation.doOperation(rule.get(VALUE_POS).toString(), attr)) {
+                                    entryCount++;
                                 }
-                            } else {
-                                logger.error(String.format("The operation: %s is unknown, skipping.", op));
                             }
+                        } else {
+                            logger.error(String.format("The operation: %s is unknown, skipping.", op));
                         }
                     }
                     else
