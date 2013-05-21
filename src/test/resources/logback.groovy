@@ -38,4 +38,4 @@ appender("CONSOLE", ConsoleAppender) {
 
 
 root(ALL)
-//logger("au.edu.jcu", TRACE, ["CONSOLE"])
+logger("au.edu.jcu", TRACE, ["CONSOLE"])

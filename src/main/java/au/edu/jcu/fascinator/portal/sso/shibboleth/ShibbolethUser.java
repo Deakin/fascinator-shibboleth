@@ -30,12 +30,12 @@ public class ShibbolethUser extends GenericUser {
     private String commonName;
 
     public ShibbolethUser(String username, String commonName) {
-        setUsername(username);
+        this.setUsername(username);
         this.commonName = commonName;
     }
 
     @Override
     public String realName() {
-        return commonName;
+        return this.commonName;
     }
 }

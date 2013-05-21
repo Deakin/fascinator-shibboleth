@@ -162,8 +162,14 @@ public class Shibboleth implements SSOInterface {
             String tmp;
             for (String s : SHIB_ATTRIBUTES) {
                 tmp = (String) session.get(s);
-                if (!s.equals(SHIB_USER_NAME) && !s.equals(SHIB_COMMON_NAME)) {
-                    user.set(s, tmp);
+                try{
+                    if (!s.equals(SHIB_USER_NAME) && !s.equals(SHIB_COMMON_NAME)) {
+                        user.set(s, tmp);
+                    }
+                }
+                catch(Exception e)
+                {
+                    logger.trace(String.format("Exception: %s", e.getMessage()));
                 }
             }
             user.setSource(SHIBBOLETH_PLUGIN_ID);
