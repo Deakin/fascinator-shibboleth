@@ -78,7 +78,7 @@ public class SSOTest {
     public void testUser() {
 
         GenericUser user = (GenericUser)s.getUserObject(session);
-        Assert.assertEquals(user.getUsername(), "ddsdsf678hgH878786G67F7Fg");
+        Assert.assertEquals(user.getUsername(), "Billy Blogs<ddsdsf678hgH878786G67F7Fg>");
         Assert.assertEquals(user.realName(), "Billy Blogs");
 
     }

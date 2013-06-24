@@ -30,7 +30,7 @@ public class ShibbolethUser extends GenericUser {
     private String commonName;
 
     public ShibbolethUser(String username, String commonName) {
-        this.setUsername(username);
+        this.setUsername(commonName + "<" + username + ">");
         this.commonName = commonName;
     }
 
