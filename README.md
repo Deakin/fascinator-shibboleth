@@ -1,6 +1,19 @@
 The Fascinator Shibboleth SSO Plugin
 ====
 
+
+
+Documents for this Research Metadata Store project
+
+Deakin Customisation to Footprints (aka ReDBox) and Mint
+https://docs.google.com/document/d/13ufOg_YX2A5R5XIn2HpAyho9TLlWnxBq0aEjRPjl4m4
+
+
+HowTo: Customise, Build and Deploy Mint/ReDBox
+https://docs.google.com/document/d/1mgYKDa9tCSsbWC_MZ1dq7G_7Nsfpa0ic3SvFrGRI2sA
+
+
+
 This project is a plugin for The Fascinator project: https://code.google.com/p/the-fascinator
 though, typically, it would be used in an institutional build of RedBoX: http://code.google.com/p/redbox-mint/ .
 You will need to run your servlet container behind a shibboleth enabled web server like Apache.
